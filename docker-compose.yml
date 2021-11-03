@@ -1,0 +1,31 @@
+version: "3"
+
+networks:
+  backend:
+    driver: bridge
+
+services:
+  app:
+    build: ./
+    volumes:
+      - ./:/usr/src/app
+    ports:
+      - 4000:4000
+    stdin_open: true
+    tty: true
+    command:
+      sh -c "cd ${PROJECT_NAME} && mix phx.server"
+    networks:
+      - backend
+
+  db:
+    image: postgres
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    ports:
+      - ${POSTGRES_PORT}:5432
+    restart: always
+    networks:
+      - backend
